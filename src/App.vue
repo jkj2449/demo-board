@@ -11,15 +11,23 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item
-          v-if="!isLogin"
-          router :to="{name: 'login'}" exact
+          v-if="!isSignIn"
+          router :to="{name: 'signIn'}" exact
           >
           <v-list-item-content>
-            <v-list-item-title>Login</v-list-item-title>
+            <v-list-item-title>Sign In</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item
+          v-if="!isSignIn"
+          router :to="{name: 'signUp'}" exact
+          >
+          <v-list-item-content>
+            <v-list-item-title>Sign Up</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item 
-          v-if="isLogin"
+          v-if="isSignIn"
           router :to="{name: 'mypage'}" exact
           >
           <v-list-item-content>
@@ -53,8 +61,8 @@
             <v-list-item router :to="{name: 'mypage'}">
               <v-list-item-title>My Page</v-list-item-title>
             </v-list-item>
-            <v-list-item  @click="$store.dispatch('logout')">
-              <v-list-item-title>Logout</v-list-item-title>
+            <v-list-item v-if="isSignIn"  @click="$store.dispatch('signOut')">
+              <v-list-item-title>Sign Out</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -85,7 +93,7 @@
       drawer: null,
     }),
     computed: {
-      ...mapState(['isLogin'])
+      ...mapState(['isSignIn'])
     }
   }
 </script>

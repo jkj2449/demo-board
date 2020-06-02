@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '../router'
+import axios from '../http/axios'
 
 Vue.use(Vuex)
 
@@ -11,44 +12,42 @@ export default new Vuex.Store({
       {id: 1, name: 'hoza', email: 'hoza@gmail.com', password:'1234'},
       {id: 2, name: 'logo', email: 'logo@gmail.com', password:'1234'}
     ],
-    isLogin: false,
-    isLoginError: false
+    isSignIn: false,
+    isSignInError: false
   },
   mutations: {
-    loginSuccess(state, payload) {
-      state.isLogin = true
-      state.isLoginError = false
+    signInSuccess(state, payload) {
+      state.isSignIn = true
+      state.isSignInError = false
       state.userInfo = payload
     },
-    loginError(state) {
-      state.isLogin = false
-      state.isLoginError = true
+    signInError(state) {
+      state.isSignIn = false
+      state.isSignInError = true
     },
-    logout(state) {
-      state.isLogin = false
-      state.isLoginError = false
+    signOut(state) {
+      state.isSignIn = false
+      state.isSignInError = false
       state.userInfo = null
     }
   },
   actions: {
-    logout({commit}) {
-      commit('logout');
+    signOut({commit}) {
+      commit('signOut');
       router.push({name: 'home'})
     },
-    login({state, commit}, payload) {
-      let selectUser = null;
-      state.allUsers.forEach(user => {
-          if(user.email === payload.email) {
-              selectUser = user;
-          }
-      });
-
-      if(selectUser === null || selectUser.password !== payload.password ) {
-        commit('loginError');
-      } else {
-        commit('loginSuccess', selectUser);
+    signIn({state, commit}, payload) {
+      axios.post('/api/v1/signIn', {
+        email : payload.email,
+        password : payload.password
+      }).then((response) => {
+        console.log(response)
+        commit('signInSuccess', response.data);
         router.push({name: "mypage"})
-      }
+      }).catch((error) => {
+        console.log(error)
+        commit('signInError')
+      })
     }
   },
   modules: {

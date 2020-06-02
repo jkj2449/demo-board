@@ -5,7 +5,7 @@ import store from '../store'
 Vue.use(VueRouter)
 
 const rejectAuthUser = (to, from, next) => {
-  if(store.state.isLogin) {
+  if(store.state.isSignIn) {
     alert('이미 로그인 되어있습니다.')
     next('/')
   } else {
@@ -14,9 +14,9 @@ const rejectAuthUser = (to, from, next) => {
 }
 
 const onlyAuthUser = (to, from, next) => {
-  if(!store.state.isLogin) {
+  if(!store.state.isSignIn) {
     alert('로그인을 해주세요')
-    next('/login')
+    next('/signIn')
   } else {
     next();
   }
@@ -29,10 +29,15 @@ const routes = [
     component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue')
   },
   {
-    path: '/login',
-    name: 'login',
+    path: '/signIn',
+    name: 'signIn',
     beforeEnter: rejectAuthUser,
-    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
+    component: () => import(/* webpackChunkName: "login" */ '../views/SignIn.vue')
+  },
+  {
+    path: '/signUp',
+    name: 'signUp',
+    component: () => import(/* webpackChunkName: "login" */ '../views/SignUp.vue')
   },
   {
     path: '/mypage',
