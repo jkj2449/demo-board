@@ -3,16 +3,10 @@
         <v-layout align-center row wrap>
             <v-flex xs12>
                 <v-alert
-                    :value="isSignInError"
+                    :value="isSignUpError"
                     type="error"
                 >
-                    아이디와 비밀번호를 확인해주세요.
-                </v-alert>
-                <v-alert
-                    :value="isSignIn"
-                    type="success"
-                >
-                    로그인이 완료되었습니다.
+                    {{errorMessage}}
                 </v-alert>
                 <v-card>
                     <v-toolbar flat>
@@ -31,6 +25,12 @@
                     >
                     </v-text-field>
                     <v-text-field
+                        v-model="passwordConfirm"
+                        label="Password Confirm"
+                        type="password"
+                    >
+                    </v-text-field>
+                    <v-text-field
                         v-model="name"
                         label="Name"
                         type="text"
@@ -44,6 +44,7 @@
                         @click="signUp({
                             email: email,
                             password: password,
+                            passwordConfirm: passwordConfirm,
                             name: name
                         })"
                         >Sign Up</v-btn>
@@ -62,7 +63,10 @@ export default {
         return {
             email: null,
             password: null,
-            name: null
+            passwordConfirm: null,
+            name: null,
+            errorMessage: null,
+            isSignUpError : false
         }
     },
     computed: {
@@ -72,11 +76,21 @@ export default {
         ...mapActions(['signIn']),
 
         signUp(payload) {
+            if(!this.isValidForm()) {
+                return false;
+            }
+
             this.$http.post('/api/v1/signUp', {
                 email: payload.email,
                 password: payload.password,
                 username: payload.name,
             }).then((response) => {
+                if(response.data.errorCode) {
+                    this.errorMessage = '가입에 실패 했습니다.'
+                    this.isSignUpError = true;
+                    return false;
+                }
+
                 this.signIn({
                     email: payload.email,
                     password: payload.password
@@ -84,6 +98,29 @@ export default {
             }).catch((error) => {
                 console.log(error)
             })
+        },
+
+        isValidForm() {
+            if(!this.email) {
+                this.errorMessage = '이메일을 확인해 주세요.'
+                this.isSignUpError = true;
+                return false;
+            }
+
+            if(!this.password || !this.passwordConfirm || this.password !== this.passwordConfirm) {
+                this.errorMessage = '패스워드를 확인해 주세요.'
+                this.isSignUpError = true;
+                return false;
+            } 
+
+            if(!this.name) {
+                this.errorMessage = '이름을 확인해주세요'
+                this.isSignUpError = true;
+                return false;
+            }
+
+            return true;
+            
         }
     }
 }

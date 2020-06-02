@@ -8,10 +8,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     userInfo: null,
-    allUsers: [
-      {id: 1, name: 'hoza', email: 'hoza@gmail.com', password:'1234'},
-      {id: 2, name: 'logo', email: 'logo@gmail.com', password:'1234'}
-    ],
     isSignIn: false,
     isSignInError: false
   },
@@ -42,6 +38,12 @@ export default new Vuex.Store({
         password : payload.password
       }).then((response) => {
         console.log(response)
+        
+        if(response.data.errorCode) {
+          commit('signInError')
+          return
+        }
+        
         commit('signInSuccess', response.data);
         router.push({name: "mypage"})
       }).catch((error) => {

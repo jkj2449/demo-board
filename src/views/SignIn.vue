@@ -54,11 +54,7 @@ export default {
     data() {
         return {
             email: null,
-            password: null,
-            allUsers: [
-                {id: 1, name: 'hoza', email: 'hoza@gmail.com', password:'1234'},
-                {id: 2, name: 'logo', email: 'logo@gmail.com', password:'1234'}
-            ]
+            password: null
         }
     },
     computed: {
