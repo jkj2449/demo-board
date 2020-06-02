@@ -40,6 +40,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "login" */ '../views/SignUp.vue')
   },
   {
+    path: '/write',
+    name: 'write',
+    component: () => import(/* webpackChunkName: "login" */ '../views/Write.vue')
+  },
+  {
     path: '/mypage',
     name: 'mypage',
     beforeEnter: onlyAuthUser,

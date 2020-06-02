@@ -9,13 +9,15 @@ export default new Vuex.Store({
   state: {
     userInfo: null,
     isSignIn: false,
-    isSignInError: false
+    isSignInError: false,
+    Authorization: null,
   },
   mutations: {
     signInSuccess(state, payload) {
       state.isSignIn = true
       state.isSignInError = false
-      state.userInfo = payload
+      state.userInfo = payload.userInfo
+      state.Authorization = payload.Authorization;
     },
     signInError(state) {
       state.isSignIn = false
@@ -25,6 +27,7 @@ export default new Vuex.Store({
       state.isSignIn = false
       state.isSignInError = false
       state.userInfo = null
+      state.Authorization = null;
     }
   },
   actions: {
@@ -37,14 +40,18 @@ export default new Vuex.Store({
         email : payload.email,
         password : payload.password
       }).then((response) => {
-        console.log(response)
+        console.log("signIn response =", response)
         
         if(response.data.errorCode) {
           commit('signInError')
-          return
+          return false;
+        }
+        let payload = {
+          userInfo: response.data,
+          Authorization: response.headers.authorization
         }
         
-        commit('signInSuccess', response.data);
+        commit('signInSuccess', payload);
         router.push({name: "mypage"})
       }).catch((error) => {
         console.log(error)
